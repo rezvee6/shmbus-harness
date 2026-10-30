@@ -14,6 +14,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read compiler version
+        id: compiler
+        run: echo "version=$(c++ -dumpfullversion)" >> "$GITHUB_OUTPUT"
+
+      # Keeps compiled dependencies between runs. Checkout gives project sources
+      # fresh timestamps, so they still rebuild every time.
+      - name: Cache build directory
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: build-${{ matrix.preset }}-${{ steps.compiler.outputs.version }}-${{ hashFiles('**/CMakeLists.txt', 'CMakePresets.json') }}
+
       # The runner's default ASLR entropy makes TSan abort at startup with
       # "unexpected memory mapping".
       - name: Lower ASLR entropy for TSan
