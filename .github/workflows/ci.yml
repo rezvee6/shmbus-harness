@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [debug, release, tsan, asan, ubsan]
+    steps:
+      - uses: actions/checkout@v4
+
+      # The runner's default ASLR entropy makes TSan abort at startup with
+      # "unexpected memory mapping".
+      - name: Lower ASLR entropy for TSan
+        if: matrix.preset == 'tsan'
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
+      - name: Configure, build, test
+        run: cmake --workflow --preset ${{ matrix.preset }}
