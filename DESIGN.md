@@ -1,7 +1,7 @@
 # Decisions log
 
 Each entry records the choice, the alternatives, why they lost, and what would
-reopen it. The first three were scaffolding defaults; challenge them.
+reopen it. The first four were scaffolding defaults; challenge them.
 
 ## Develop on macOS, target Linux only
 
@@ -35,3 +35,16 @@ that coverage automatic.
 boilerplate; it's a low-stakes choice.
 
 **Reconsider if:** `TEST_CASE` overhead or compile times become a problem.
+
+## HdrHistogram_c in core-only mode
+
+**Choice:** HdrHistogram_c 0.12.1, pinned with FetchContent, built with
+`HDR_HISTOGRAM_CORE_ONLY`. That gives only the record and percentile engine, with
+no zlib or threads.
+
+**Alternatives:** the full library, which adds log encoding and an interval
+recorder that the harness doesn't need yet. Writing a histogram by hand, which
+would mean debugging the instrument as well as the thing it measures.
+
+**Reconsider if:** runs need HdrHistogram's log format, or recording interval
+snapshots from a running process.

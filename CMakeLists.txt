@@ -29,6 +29,17 @@ target_include_directories(shmbus INTERFACE include)
 add_library(shmbus_warnings INTERFACE)
 target_compile_options(shmbus_warnings INTERFACE -Wall -Wextra -Wpedantic -Werror)
 
+include(FetchContent)
+
+set(HDR_HISTOGRAM_CORE_ONLY ON CACHE BOOL "" FORCE)
+FetchContent_Declare(
+  hdr_histogram
+  GIT_REPOSITORY https://github.com/HdrHistogram/HdrHistogram_c.git
+  GIT_TAG 0.12.1
+  GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(hdr_histogram)
+
 include(CTest)
 if(BUILD_TESTING)
   add_subdirectory(tests)
